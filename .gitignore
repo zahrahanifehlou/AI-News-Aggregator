@@ -2,3 +2,7 @@
 /app/__pycache__
 /mlruns
 /zenv
+.env
+.venv
+__pycache__/
+*.pyc
