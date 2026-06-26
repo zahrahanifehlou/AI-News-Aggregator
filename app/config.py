@@ -3,3 +3,5 @@ RSS_FEEDS = {
     "Anthropic": "https://www.anthropic.com/news/rss.xml",
     "HuggingFace": "https://huggingface.co/blog/feed.xml",
 }
+
+DATABASE_URL = "postgresql://postgres:123@localhost:5432/news"
