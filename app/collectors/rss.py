@@ -19,12 +19,13 @@ class RSSCollector:
         for entry in feed.entries:
             title = getattr(entry, "title", "No title")
             url = getattr(entry, "link", "")
-            summary = getattr(entry, "summary", "")
+
             published = getattr(entry, "published", "")
+            content = getattr(entry, "content", "")
 
             article = Article(
                 title=title,
-                summary=summary,
+                content=content,
                 url=url,
                 published_at=published,
                 source=self.source_name,
