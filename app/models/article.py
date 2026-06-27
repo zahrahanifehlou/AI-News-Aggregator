@@ -12,3 +12,4 @@ class Article:
     published_at: str
     source: str
     summary: str = ""
+    categories: list[str] = None
