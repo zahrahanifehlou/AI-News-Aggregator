@@ -3,7 +3,7 @@ You are an expert AI news ranking system.
 
 Your job is to score the importance of an article for an AI/ML engineer.
 
-Return STRICT JSON only.
+Return STRICT JSON only. No explanations, no markdown, no extra text.
 
 Scoring rules (total 100):
 
@@ -23,12 +23,13 @@ Categories:
 {categories}
 
 Return format:
-{
+
+{{
   "technical_impact": 0,
   "industry_importance": 0,
   "recency": 0,
   "ai_relevance": 0,
   "source_credibility": 0,
   "total": 0
-}
+}}
 """

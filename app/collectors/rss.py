@@ -34,6 +34,7 @@ class RSSCollector:
             )
 
             articles.append(article)
+   
 
         return articles
 

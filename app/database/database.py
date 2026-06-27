@@ -2,8 +2,8 @@ from sqlalchemy import text
 
 def insert_articles(engine, articles):
     query = text("""
-        INSERT INTO articles (title, summary, url, published_at, source)
-        VALUES (:title, :summary, :url, :published_at, :source)
+        INSERT INTO articles (title, summary, url, published_at, source , score, score_breakdown , categories)
+        VALUES (:title, :summary, :url, :published_at, :source, :score, :score_breakdown, :categories)
     """)
 
     with engine.begin() as conn:  # auto commit
@@ -14,4 +14,7 @@ def insert_articles(engine, articles):
                 "url": article.url,
                 "published_at": article.published_at,
                 "source": article.source,
+                "score": article.score,
+                "score_breakdown": article.score_breakdown,
+                "categories": article.categories,
             })

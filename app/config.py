@@ -5,8 +5,8 @@ load_dotenv()
 
 RSS_FEEDS = {
     "OpenAI": "https://openai.com/news/rss.xml",
-    "Anthropic": "https://www.anthropic.com/news/rss.xml",
-    "HuggingFace": "https://huggingface.co/blog/feed.xml",
+    # "Anthropic": "https://www.anthropic.com/news/rss.xml",
+    # "HuggingFace": "https://huggingface.co/blog/feed.xml",
 }
 model_name="deepseek-r1:latest"
 model_temperature=0.2

@@ -16,24 +16,19 @@ class NewsRankingAgent:
             categories=article.categories
         )
 
-        response = self.llm.client.chat.completions.create(
-            model="gpt-4.1-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.2,
-        )
+        response = self.llm.generate(prompt)
 
-        raw = response.choices[0].message.content
-
+        
         try:
-            scores = json.loads(raw)
+            scores = json.loads(response)
         except:
             scores = {
-                "technical_impact": 10,
-                "industry_importance": 10,
-                "recency": 10,
-                "ai_relevance": 10,
-                "source_credibility": 5,
-                "total": 45
+                "technical_impact": 0,
+                "industry_importance": 0,
+                "recency": 0,
+                "ai_relevance": 0,
+                "source_credibility": 0,
+                "total": 0
             }
 
         article.score_breakdown = scores
