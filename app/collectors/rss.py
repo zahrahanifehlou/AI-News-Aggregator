@@ -20,8 +20,10 @@ class RSSCollector:
             title = getattr(entry, "title", "No title")
             url = getattr(entry, "link", "")
 
-            published = getattr(entry, "published", "")
-            content = getattr(entry, "content", "")
+            # Better content extraction
+            content = self._extract_content(entry)
+
+            published = getattr(entry, "published", "") or getattr(entry, "pubDate", "")
 
             article = Article(
                 title=title,
@@ -34,3 +36,19 @@ class RSSCollector:
             articles.append(article)
 
         return articles
+
+    def _extract_content(self, entry):
+        """Try multiple possible fields for content"""
+        # Priority order
+        if hasattr(entry, "content") and entry.content:
+            # content is usually a list of dicts
+            return entry.content[0].get('value', "")
+
+        # Most common fields
+        content = getattr(entry, "description", "") or getattr(entry, "summary", "")
+        
+        # Fallback: try encoded content (some feeds use this)
+        if not content:
+            content = getattr(entry, "content:encoded", "") or getattr(entry, "content_encoded", "")
+
+        return content.strip()
