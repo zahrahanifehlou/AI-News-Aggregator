@@ -1,54 +1,57 @@
 from app.collectors.rss import RSSCollector
 from app.services.summarizer import Summarizer
 from app.services.deduplicator import Deduplicator
-from app.config import RSS_FEEDS
 from app.services.classifier import Classifier
+from app.agents.news_agent import NewsRankingAgent
+from app.services.newsletter import NewsletterBuilder
+from app.services.email_sender import EmailSender
+from app.config import RSS_FEEDS
+
 
 summarizer = Summarizer()
 deduplicator = Deduplicator()
 classifier = Classifier()
+ranker = NewsRankingAgent()
+
+builder = NewsletterBuilder()
+sender = EmailSender()
 
 all_articles = []
 
+# 1. Collect + summarize
 for source, url in RSS_FEEDS.items():
 
     collector = RSSCollector(source, url)
-
     articles = collector.collect()
 
     for article in articles:
         article = summarizer.summarize(article)
         all_articles.append(article)
 
+# 2. Deduplicate
 unique_articles = deduplicator.remove_duplicates(all_articles)
 
-print(f"Collected: {len(all_articles)}")
-print(f"Unique: {len(unique_articles)}")
-
-classified_articles = []
+# 3. Classify + rank
+processed = []
 
 for article in unique_articles:
+
     article = classifier.classify(article)
-    classified_articles.append(article)
+    article = ranker.rank(article)
 
-for article in classified_articles:
-    print("=" * 80)
-    print(article.title)
-    print("CATEGORIES:", article.categories)
-    print(article.summary)
+    processed.append(article)
 
+# 4. Sort
+final_feed = sorted(processed, key=lambda x: x.score, reverse=True)
 
-# for article in unique_articles:
-#     print(article.title)
-    # # insert articles into database
-    # from app.database.database import insert_articles
-    # from app.config import DATABASE_URL
-    # from sqlalchemy import create_engine
+# 5. Build newsletter
+html = builder.build_html(final_feed)
 
-    # engine = create_engine(DATABASE_URL)
-    # insert_articles(engine, all_articles)
-    # print(f"Inserted {len(all_articles)} articles into the database---Phase 2 Complete")
+# 6. Send email
+sender.send(
+    to_email="hanifelo@live.com",
+    subject="Daily AI News Digest",
+    html_content=html
+)
 
-
-if __name__ == "__main__":
-    run()
+print("Newsletter sent successfully.")

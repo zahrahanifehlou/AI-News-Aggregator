@@ -13,6 +13,9 @@ model_temperature=0.2
 model_context_window=8192
 DATABASE_URL = "postgresql://postgres:123@localhost:5432/news"
 
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
 
 # # ollama list
 # # NAME                        ID              SIZE      MODIFIED
