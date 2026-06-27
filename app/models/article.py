@@ -13,3 +13,5 @@ class Article:
     source: str
     summary: str = ""
     categories: list[str] = None
+    score: float = 0.0
+    score_breakdown: dict = None
