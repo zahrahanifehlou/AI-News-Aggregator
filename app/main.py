@@ -24,13 +24,15 @@ for source, url in RSS_FEEDS.items():
     collector = RSSCollector(source, url)
     articles = collector.collect()
 
-    for article in articles:
+    for article in articles[1:20]:
         article = summarizer.summarize(article)
         all_articles.append(article)
+        print(f"Summarized article: {article.title}")
+print(f"Collected {len(all_articles)} articles")
 
 # 2. Deduplicate
 unique_articles = deduplicator.remove_duplicates(all_articles)
-
+print(f"Unique articles: {len(unique_articles)}")
 # 3. Classify + rank
 processed = []
 
