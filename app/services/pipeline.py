@@ -1,3 +1,4 @@
+
 from app.collectors.rss import RSSCollector
 from app.services.summarizer import Summarizer
 from app.services.deduplicator import Deduplicator
@@ -50,5 +51,3 @@ def send_newsletter(final_feed):
         subject="Daily AI News Digest",
         html_content=html
     )
-
-    
