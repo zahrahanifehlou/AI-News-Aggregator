@@ -7,12 +7,16 @@ from app.services.classifier import Classifier
 from app.agents.news_agent import NewsRankingAgent
 from app.config import RSS_FEEDS
 from app.models.article import Article
+from app.services.newsletter import NewsletterBuilder
+from app.services.email_sender import EmailSender
 
 def run_news_pipeline():
     summarizer = Summarizer()
     deduplicator = Deduplicator()
     classifier = Classifier()
     ranker = NewsRankingAgent()
+    builder = NewsletterBuilder()
+    sender = EmailSender()
 
     all_articles = []
 
@@ -20,14 +24,14 @@ def run_news_pipeline():
     for source, url in RSS_FEEDS.items():
         collector = RSSCollector(source, url)
         articles = collector.collect()
-        articles=articles[1:2]
+        articles=articles[1:5]
         for article in articles:
             
             article = summarizer.summarize(article)
             all_articles.append(article)
 
     # 2. Deduplicate
-
+ 
     unique_articles = deduplicator.remove_duplicates(all_articles)
 
     # 3. Classify + rank
@@ -40,5 +44,22 @@ def run_news_pipeline():
 
     # 4. Sort by score
     processed.sort(key=lambda x: x.score, reverse=True)
+
+   
+    # 4. Sort
+    final_feed = sorted(processed, key=lambda x: x.score, reverse=True)
+
+    # 5. Build newsletter
+    html = builder.build_html(final_feed)
+
+    # 6. Send email
+    sender.send(
+        to_email="hanifelo@live.com",
+        subject="Daily AI News Digest",
+        html_content=html
+    )
+
+    print("Newsletter sent successfully.")
+
 
     return processed
