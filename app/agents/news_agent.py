@@ -5,9 +5,6 @@ from app.prompts.ranker import RANKING_PROMPT
 
 class NewsRankingAgent:
 
-    def __init__(self):
-        self.llm = LLMProvider()
-
     def rank(self, article):
 
         prompt = RANKING_PROMPT.format(
@@ -16,12 +13,18 @@ class NewsRankingAgent:
             categories=article.categories
         )
 
-        response = self.llm.generate(prompt)
+        response = LLMProvider.classify(prompt)
 
-        
+        response = response.strip()
+        if response.startswith("```json"):
+            response = response.split("```json")[1].split("```")[0].strip()
+        elif response.startswith("```"):
+            response = response.split("```")[1].split("```")[0].strip()
+
         try:
             scores = json.loads(response)
-        except:
+        except (json.JSONDecodeError, Exception) as e:
+            print(f"Ranking parse error for '{article.title}': {e}")
             scores = {
                 "technical_impact": 0,
                 "industry_importance": 0,

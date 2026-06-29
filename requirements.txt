@@ -2,3 +2,9 @@ feedparser
 python-dotenv
 requests
 pydantic
+ollama
+fastapi
+uvicorn
+sentence-transformers
+scikit-learn
+numpy

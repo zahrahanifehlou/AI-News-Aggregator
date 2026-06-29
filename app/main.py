@@ -23,8 +23,8 @@ for source, url in RSS_FEEDS.items():
 
     collector = RSSCollector(source, url)
     articles = collector.collect()
-
-    for article in articles[1:20]:
+    articles=articles[1:5]
+    for article in articles:
         article = summarizer.summarize(article)
         all_articles.append(article)
         print(f"Summarized article: {article.title}")

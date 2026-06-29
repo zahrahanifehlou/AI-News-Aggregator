@@ -26,8 +26,9 @@ class EmailSender:
         msg.attach(MIMEText(html_content, "html"))
 
         server = smtplib.SMTP(self.smtp_server, self.smtp_port)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASSWORD)
-
-        server.send_message(msg)
-        server.quit()
+        try:
+            server.starttls()
+            server.login(EMAIL_USER, EMAIL_PASSWORD)
+            server.send_message(msg)
+        finally:
+            server.quit()

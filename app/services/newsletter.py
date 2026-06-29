@@ -15,7 +15,7 @@ class NewsletterBuilder:
 
             content.append(f"\n{i}. {article.title} (Score: {article.score})")
             content.append(f"Source: {article.source}")
-            content.append(f"Categories: {', '.join(article.categories)}\n")
+            content.append(f"Categories: {', '.join(article.categories or [])}\n")
 
             content.append("Summary:")
             content.append(article.summary)
@@ -39,7 +39,7 @@ class NewsletterBuilder:
             <hr>
             <h2>{article.title}</h2>
             <p><b>Score:</b> {article.score}</p>
-            <p><b>Categories:</b> {', '.join(article.categories)}</p>
+            <p><b>Categories:</b> {', '.join(article.categories or [])}</p>
             <pre>{article.summary}</pre>
             """
 

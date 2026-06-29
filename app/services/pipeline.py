@@ -31,7 +31,6 @@ def run_news_pipeline():
             all_articles.append(article)
 
     # 2. Deduplicate
- 
     unique_articles = deduplicator.remove_duplicates(all_articles)
 
     # 3. Classify + rank
@@ -43,10 +42,6 @@ def run_news_pipeline():
         processed.append(article)
 
     # 4. Sort by score
-    processed.sort(key=lambda x: x.score, reverse=True)
-
-   
-    # 4. Sort
     final_feed = sorted(processed, key=lambda x: x.score, reverse=True)
 
     # 5. Build newsletter
