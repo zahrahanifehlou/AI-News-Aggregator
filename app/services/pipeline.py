@@ -1,12 +1,9 @@
-# app/services/pipeline.py
-
 from app.collectors.rss import RSSCollector
 from app.services.summarizer import Summarizer
 from app.services.deduplicator import Deduplicator
 from app.services.classifier import Classifier
 from app.agents.news_agent import NewsRankingAgent
 from app.config import RSS_FEEDS
-from app.models.article import Article
 from app.services.newsletter import NewsletterBuilder
 from app.services.email_sender import EmailSender
 
@@ -15,6 +12,7 @@ def run_news_pipeline():
     deduplicator = Deduplicator()
     classifier = Classifier()
     ranker = NewsRankingAgent()
+
     builder = NewsletterBuilder()
     sender = EmailSender()
 
@@ -22,26 +20,30 @@ def run_news_pipeline():
 
     # 1. Collect + summarize
     for source, url in RSS_FEEDS.items():
+
         collector = RSSCollector(source, url)
         articles = collector.collect()
         articles=articles[1:5]
         for article in articles:
-            
             article = summarizer.summarize(article)
             all_articles.append(article)
+            print(f"Summarized article: {article.title}")
+    print(f"Collected {len(all_articles)} articles")
 
     # 2. Deduplicate
     unique_articles = deduplicator.remove_duplicates(all_articles)
-
+    print(f"Unique articles: {len(unique_articles)}")
     # 3. Classify + rank
     processed = []
 
     for article in unique_articles:
+
         article = classifier.classify(article)
         article = ranker.rank(article)
+
         processed.append(article)
 
-    # 4. Sort by score
+    # 4. Sort
     final_feed = sorted(processed, key=lambda x: x.score, reverse=True)
 
     # 5. Build newsletter
@@ -55,6 +57,3 @@ def run_news_pipeline():
     )
 
     print("Newsletter sent successfully.")
-
-
-    return processed
