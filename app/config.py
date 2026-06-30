@@ -8,13 +8,20 @@ RSS_FEEDS = {
 
    # "HuggingFace": "https://huggingface.co/blog/feed.xml",
 }
-model_name="deepseek-r1:latest"
-model_temperature=0.2
-model_context_window=8192
-DATABASE_URL = "postgresql://postgres:123@localhost:5432/news"
+model_name = "deepseek-r1:latest"
+model_temperature = 0.2
+model_context_window = 8192
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:123@localhost:5432/news")
 
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
+# Maximum number of articles to keep from each RSS feed per run.
+MAX_ARTICLES_PER_FEED = int(os.getenv("MAX_ARTICLES_PER_FEED", "5"))
+
+# Default recipient for the daily newsletter.
+NEWSLETTER_RECIPIENT = os.getenv("NEWSLETTER_RECIPIENT", "hanifelo@live.com")
 
 
 # # ollama list

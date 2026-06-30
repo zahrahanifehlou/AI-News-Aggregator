@@ -1,7 +1,5 @@
 from sklearn.metrics.pairwise import cosine_similarity
 from app.embeddings.encoder import EmbeddingEncoder
-import numpy as np
-from typing import List
 
 
 class Deduplicator:

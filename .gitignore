@@ -1,0 +1,21 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.eggs/
+
+# Logs
+*.log
+nohup.out
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
