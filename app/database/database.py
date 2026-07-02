@@ -15,6 +15,6 @@ def insert_articles(engine, articles):
                 "published_at": article.published_at,
                 "source": article.source,
                 "score": article.score,
-                "score_breakdown": article.score_breakdown,
+                "score_breakdown": list(article.score_breakdown),
                 "categories": article.categories,
             })
