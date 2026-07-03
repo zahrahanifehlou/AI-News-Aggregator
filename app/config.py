@@ -17,6 +17,9 @@ EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
+broker="redis://localhost:6379/0"
+backend="redis://localhost:6379/0"  
+
 # # ollama list
 # # NAME                        ID              SIZE      MODIFIED
 # # gemma4:latest               c6eb396dbd59    9.6 GB    2 months ago
