@@ -38,8 +38,7 @@ services:
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: news
 
-    ports:
-      - "5432:5432"
+    ports: [] 
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -49,8 +48,7 @@ services:
 
     container_name: news-redis
 
-    ports:
-      - "6379:6379"
+    ports: [] 
 
 volumes:
   postgres_data:
