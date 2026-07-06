@@ -1,9 +1,8 @@
-# app/workers/tasks.py
-
 from app.workers.celery_app import celery
 from app.core.database import SessionLocal
 from app.repositories.article_repository import ArticleRepository
 from app.services.pipeline.orchestrator import NewsPipeline
+
 
 @celery.task
 def run_pipeline_task():
@@ -11,25 +10,10 @@ def run_pipeline_task():
     try:
         repo = ArticleRepository()
         pipeline = NewsPipeline(repo)
-        inserted = pipeline.run(db)
-        return {"inserted": inserted}
-    finally:
-        db.close()
 
+        inserted_articles = pipeline.run(db)  # return inserted items
 
-@celery.task
-def send_newsletter_task():
-    from app.services.newsletter import NewsletterBuilder
-    from app.services.email_sender import EmailSender
-    from app.repositories.article_repository import ArticleRepository
-    from app.core.database import SessionLocal
-
-    db = SessionLocal()
-    try:
-        repo = ArticleRepository()
-        articles = repo.get_top(db, limit=20)
-
-        html = NewsletterBuilder().build_html(articles)
+        html = NewsletterBuilder().build_html(inserted_articles)
 
         EmailSender().send(
             to_email="hanifelo@live.com",
@@ -37,6 +21,6 @@ def send_newsletter_task():
             html_content=html
         )
 
-        return {"sent": len(articles)}
+        return {"inserted": len(inserted_articles)}
     finally:
         db.close()
