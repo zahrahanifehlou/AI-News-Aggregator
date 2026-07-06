@@ -1,19 +1,15 @@
-# app/workers/celery_app.py
 from celery import Celery
 from celery.schedules import crontab
 
 from app.config import BROKER_URL, RESULT_BACKEND
 
-
 celery = Celery(
     "news_worker",
     broker=BROKER_URL,
     backend=RESULT_BACKEND,
+    include=['app.workers.tasks'],   # ← This is the key line
 )
 
-# ------------------------
-# Config
-# ------------------------
 celery.conf.update(
     task_serializer="json",
     result_serializer="json",
@@ -22,12 +18,10 @@ celery.conf.update(
     enable_utc=False,
 )
 
-# ------------------------
-# Schedule tasks
-# ------------------------
+# Direct beat schedule (simpler and more reliable)
 celery.conf.beat_schedule = {
-    'run-daily-news-pipeline': {
+    'daily-news-pipeline': {
         'task': 'app.workers.tasks.run_pipeline_task',
-        'schedule': crontab(hour=20, minute=0),
+        'schedule': crontab(hour=20, minute=30),
     },
 }
