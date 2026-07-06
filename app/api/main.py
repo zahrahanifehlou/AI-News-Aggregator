@@ -1,34 +1,15 @@
 from typing import List
-
 from celery.result import AsyncResult
 from fastapi import Depends, FastAPI, HTTPException, Query
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-
-from app.database.database import get_db
-from app.models.article import Article
 from app.services.tasks import process_news, send_newsletter_task
 from app.workers.celery_worker import celery
+from app.models.article import ArticleResponse
 
 app = FastAPI(
     title="AI News Pipeline API",
     description="Daily AI News collection, ranking & newsletter service",
     version="2.0.0",
 )
-
-
-class ArticleResponse(BaseModel):
-    title: str
-    score: float
-    categories: List[str]
-    summary: str
-    url: str
-    source: str
-    published_at: str
-
-    class Config:
-        from_attributes = True
-
 
 @app.get("/")
 def home():
@@ -44,30 +25,34 @@ def home():
 
 @app.post("/run-pipeline")
 def run_pipeline():
-
-    task = process_news.delay()
-
-    return {
-        "message": "Pipeline queued successfully",
-        "task_id": task.id,
-        "status": task.status,
-    }
+    ## with fastAPI
+    from app.services.pipeline import run_news_pipeline
+    run_news_pipeline()
+    return {"message": "Pipeline executed successfully"}
+    
+    ## with celery
+    # task = process_news.delay()
+    # return {
+    #     "message": "Pipeline queued successfully",
+    #     "task_id": task.id,
+    #     "status": task.status,
+    # }
 
 
 # ---------------------------------------------------
 # Task Status
 # ---------------------------------------------------
 
-@app.get("/tasks/{task_id}")
-def get_task_status(task_id: str):
+# @app.get("/tasks/{task_id}")
+# def get_task_status(task_id: str):
 
-    task = AsyncResult(task_id, app=celery)
+#     task = AsyncResult(task_id, app=celery)
 
-    return {
-        "task_id": task.id,
-        "state": task.state,
-        "result": task.result,
-    }
+#     return {
+#         "task_id": task.id,
+#         "state": task.state,
+#         "result": task.result,
+#     }
 
 
 # ---------------------------------------------------
@@ -76,14 +61,18 @@ def get_task_status(task_id: str):
 
 @app.post("/send-newsletter")
 def send_newsletter_endpoint():
-
-    task = send_newsletter_task.delay()
-
-    return {
-        "message": "Newsletter queued",
-        "task_id": task.id,
-        "status": task.status,
-    }
+    # with FastAPI
+    from app.services.pipeline import send_newsletter
+    send_newsletter()
+    return {"message": "Newsletter sent successfully"}
+    
+    # with Celery
+    # task = send_newsletter_task.delay()
+    # return {
+    #     "message": "Newsletter queued",
+    #     "task_id": task.id,
+    #     "status": task.status,
+    # }
 
 
 # ---------------------------------------------------
@@ -91,17 +80,9 @@ def send_newsletter_endpoint():
 # ---------------------------------------------------
 
 @app.get("/news", response_model=List[ArticleResponse])
-def get_news(
-    limit: int = Query(50, ge=1, le=200),
-    db: Session = Depends(get_db),
-):
-
-    articles = (
-        db.query(Article)
-        .order_by(Article.score.desc())
-        .limit(limit)
-        .all()
-    )
+def get_news():
+    from app.services.pipeline import get_top_articles
+    articles = get_top_articles(limit=20)
 
     return articles
 
@@ -112,17 +93,11 @@ def get_news(
 
 @app.get("/news/top", response_model=List[ArticleResponse])
 def get_top_news(
-    limit: int = Query(5, ge=1, le=20),
-    db: Session = Depends(get_db),
+    limit: int = Query(5, ge=1, le=20)
 ):
 
-    articles = (
-        db.query(Article)
-        .order_by(Article.score.desc())
-        .limit(limit)
-        .all()
-    )
-
+    from app.services.pipeline import get_top_articles
+    articles = get_top_articles(limit=limit)
     return articles
 
 
@@ -134,16 +109,10 @@ def get_top_news(
 def get_news_by_category(
     category: str,
     limit: int = Query(50, ge=1, le=100),
-    db: Session = Depends(get_db),
 ):
 
-    articles = (
-        db.query(Article)
-        .filter(Article.categories.contains([category]))
-        .order_by(Article.score.desc())
-        .limit(limit)
-        .all()
-    )
+    from app.database.database import get_news_by_category
+    articles = get_news_by_category(category=category, limit=limit)
 
     return articles
 
@@ -153,9 +122,11 @@ def get_news_by_category(
 # ---------------------------------------------------
 
 @app.get("/health")
-def health(db: Session = Depends(get_db)):
+def health():
 
-    count = db.query(Article).count()
+    from app.database.database import get_top_articles
+    articles = get_top_articles(limit=1)
+    count = len(articles)
 
     return {
         "status": "healthy",

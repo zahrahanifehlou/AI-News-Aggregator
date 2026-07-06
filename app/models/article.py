@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from pydantic import BaseModel
+from typing import List
 
 @dataclass
 class Article:
@@ -17,3 +19,16 @@ class Article:
 
     def __str__(self):
         return f"[{self.source}] {self.title}"
+
+
+class ArticleResponse(BaseModel):
+    title: str
+    score: float
+    categories: List[str]
+    summary: str
+    url: str
+    source: str
+    published_at: str
+
+    class Config:
+        from_attributes = True

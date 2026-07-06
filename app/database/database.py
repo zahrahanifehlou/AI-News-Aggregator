@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 import json
-
+from sqlalchemy import text
 from app.config import DATABASE_URL
 
 # ---------------------------------------------------
@@ -87,12 +87,53 @@ def insert_articles(articles):
 
         db.execute(query, payload)
         db.commit()
+        print("Inserted articles:", len(payload))
 
         return len(payload)
 
     except Exception:
         db.rollback()
         raise
+
+    finally:
+        db.close()
+
+
+
+
+
+
+
+def get_top_articles(limit: int = 20):
+    db: Session = SessionLocal()
+
+    try:
+        result = db.execute(text("""
+            SELECT title, content, url, published_at, source, score_breakdown, categories
+            FROM articles
+            ORDER BY published_at DESC
+            LIMIT :limit
+        """), {"limit": limit})
+        rows = result.mappings().all()
+        return rows
+
+    finally:
+        db.close()
+    
+
+def get_news_by_category(category: str, limit: int = 20):
+    db: Session = SessionLocal()
+
+    try:
+        result = db.execute(text("""
+            SELECT title, content, url, published_at, source, score_breakdown, categories
+            FROM articles
+            WHERE categories LIKE :category
+            ORDER BY published_at DESC
+            LIMIT :limit
+        """), {"category": f"%{category}%", "limit": limit})
+        rows = result.mappings().all()
+        return rows
 
     finally:
         db.close()

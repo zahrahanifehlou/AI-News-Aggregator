@@ -7,15 +7,8 @@ from app.agents.news_agent import NewsRankingAgent
 from app.config import RSS_FEEDS
 from app.services.newsletter import NewsletterBuilder
 from app.services.email_sender import EmailSender
-
-
-
-from app.collectors.rss import RSSCollector
-from app.services.summarizer import Summarizer
-from app.services.deduplicator import Deduplicator
-from app.services.classifier import Classifier
-from app.agents.news_agent import NewsRankingAgent
-from app.config import RSS_FEEDS
+from app.database.database import get_top_articles
+from app.models.article import Article
 from app.database.database import insert_articles
 
 
@@ -58,32 +51,24 @@ def run_news_pipeline():
 
     return len(final_feed)
 
-from app.services.email_sender import EmailSender
-from app.services.newsletter import NewsletterBuilder
-from app.database.database import SessionLocal
-from app.models.article import Article
+
+
+
+
+
 
 
 def send_newsletter():
-    db = SessionLocal()
+    articles = get_top_articles(limit=20)
 
-    try:
-        articles = (
-            db.query(Article)
-            .order_by(Article.score.desc())
-            .limit(20)
-            .all()
-        )
+    print("get Data from DB", len(articles))
 
-        html = NewsletterBuilder().build_html(articles)
+    html = NewsletterBuilder().build_html(articles)
 
-        EmailSender().send(
-            to_email="hanifelo@live.com",
-            subject="Daily AI News Digest",
-            html_content=html
-        )
+    EmailSender().send(
+        to_email="hanifelo@live.com",
+        subject="Daily AI News Digest",
+        html_content=html
+    )
 
-        return len(articles)
-
-    finally:
-        db.close()
+    return len(articles)
