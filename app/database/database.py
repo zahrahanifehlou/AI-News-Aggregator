@@ -109,7 +109,7 @@ def get_top_articles(limit: int = 20):
 
     try:
         result = db.execute(text("""
-            SELECT title, content, url, published_at, source, score_breakdown, categories
+            SELECT title, content, url, published_at, source, score_breakdown, categories 
             FROM articles
             ORDER BY published_at DESC
             LIMIT :limit

@@ -13,12 +13,12 @@ class NewsletterBuilder:
 
         for i, article in enumerate(articles, 1):
 
-            content.append(f"\n{i}. {article.title} (Score: {article.score})")
+            content.append(f"\n{i}. {article.title} (score_breakdown: {article.score_breakdown})")
             content.append(f"Source: {article.source}")
             content.append(f"Categories: {', '.join(article.categories or [])}\n")
 
-            content.append("Summary:")
-            content.append(article.summary)
+            content.append("content:")
+            content.append(article.content)
             content.append("-" * 60)
 
         return "\n".join(content)
@@ -38,9 +38,9 @@ class NewsletterBuilder:
             html += f"""
             <hr>
             <h2>{article.title}</h2>
-            <p><b>Score:</b> {article.score}</p>
+            <p><b>Score:</b> {article.score_breakdown}</p>
             <p><b>Categories:</b> {', '.join(article.categories or [])}</p>
-            <pre>{article.summary}</pre>
+            <pre>{article.content}</pre>
             """
 
         html += "</body></html>"
