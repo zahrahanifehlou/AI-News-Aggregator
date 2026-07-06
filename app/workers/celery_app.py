@@ -1,3 +1,4 @@
+# app/workers/celery_app.py
 from celery import Celery
 from celery.schedules import crontab
 
@@ -24,9 +25,9 @@ celery.conf.update(
 # ------------------------
 # Schedule tasks
 # ------------------------
-@celery.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(
-        crontab(hour=19, minute=15),  # 19:15 Paris time
-        send_newsletter_task.s(),
-    )
+celery.conf.beat_schedule = {
+    'run-daily-news-pipeline': {
+        'task': 'app.workers.tasks.run_pipeline_task',
+        'schedule': crontab(hour=19, minute=40),
+    },
+}
