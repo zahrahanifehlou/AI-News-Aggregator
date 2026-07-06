@@ -4,7 +4,11 @@ requests
 pydantic
 ollama
 fastapi
-uvicorn
+uvicorn[standard]
 sentence-transformers
 scikit-learn
 numpy
+celery[redis]
+redis
+sqlalchemy
+psycopg2-binary

@@ -1,5 +1,5 @@
 from ollama import chat
-from app.config import model_name, model_temperature, model_context_window
+from app.config import MODEL_NAME as model_name, MODEL_TEMPERATURE as model_temperature, MODEL_CONTEXT_WINDOW as model_context_window
 
 
 class LLMProvider:

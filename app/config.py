@@ -3,22 +3,37 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# -----------------------------
+# RSS feeds (application constant)
+# -----------------------------
 RSS_FEEDS = {
     "OpenAI": "https://openai.com/news/rss.xml",
-
-   # "HuggingFace": "https://huggingface.co/blog/feed.xml",
+    # "HuggingFace": "https://huggingface.co/blog/feed.xml",
 }
-model_name="deepseek-r1:latest"
-model_temperature=0.2
-model_context_window=8192
-DATABASE_URL = "postgresql://postgres:123@localhost:5432/news"
 
+# -----------------------------
+# LLM Settings
+# -----------------------------
+MODEL_NAME = os.getenv("MODEL_NAME", "deepseek-r1:latest")
+MODEL_TEMPERATURE = float(os.getenv("MODEL_TEMPERATURE", 0.2))
+MODEL_CONTEXT_WINDOW = int(os.getenv("MODEL_CONTEXT_WINDOW", 8192))
+
+# -----------------------------
+# Database
+# -----------------------------
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# -----------------------------
+# Email
+# -----------------------------
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
-
-broker="redis://localhost:6379/0"
-backend="redis://localhost:6379/0"  
+# -----------------------------
+# Celery
+# -----------------------------
+BROKER_URL = os.getenv("BROKER_URL")
+RESULT_BACKEND = os.getenv("RESULT_BACKEND")
 
 # # ollama list
 # # NAME                        ID              SIZE      MODIFIED
