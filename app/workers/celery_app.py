@@ -1,12 +1,12 @@
 # app/workers/celery_app.py
 
 from celery import Celery
-from app.config import BROKER_URL as broker, RESULT_BACKEND as backend
+from app.config import BROKER_URL, RESULT_BACKEND
 
 celery = Celery(
     "news_worker",
-    broker=broker,
-    backend=backend,
+    broker=BROKER_URL,
+    backend=RESULT_BACKEND,
 )
 
 celery.conf.update(
