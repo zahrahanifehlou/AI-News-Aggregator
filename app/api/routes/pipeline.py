@@ -1,7 +1,7 @@
 # app/api/routes/pipeline.py
 
 from fastapi import APIRouter
-from app.workers.tasks import run_pipeline_task, send_newsletter_task
+from app.workers.tasks import run_pipeline_task
 
 router = APIRouter()
 
@@ -11,10 +11,7 @@ def run_pipeline():
     return {"task_id": task.id}
 
 
-@router.post("/send-newsletter")
-def send_newsletter():
-    task = send_newsletter_task.delay()
-    return {"task_id": task.id}
+
 
 ## without celery
 # @router.post("/run-pipeline")
