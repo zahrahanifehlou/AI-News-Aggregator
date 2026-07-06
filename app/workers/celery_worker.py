@@ -1,16 +1,13 @@
+# app/workers/celery_app.py
+
 from celery import Celery
-from app.config import broker, backend
+from app.core.config import CELERY_BROKER_URL
 
 celery = Celery(
-    "news_tasks",
-    broker="redis://localhost:6379/0",
-    backend="redis://localhost:6379/0",
+    "news_worker",
+    broker=CELERY_BROKER_URL,
+    backend=CELERY_BROKER_URL,
 )
-
-# IMPORTANT: force task discovery
-celery.conf.imports = [
-    "app.services.tasks",
-]
 
 celery.conf.update(
     task_serializer="json",
