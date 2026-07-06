@@ -37,9 +37,12 @@ class NewsPipeline:
             a = self.classifier.classify(a)
             a = self.ranker.rank(a)
             processed.append(a)
-
+        print("finish classification and ranking")
         # 4. Sort
         final_feed = sorted(processed, key=lambda x: x.score, reverse=True)
+        print("finish sorting")
+        
 
         # 5. Persist
-        return self.repo.insert_many(db, final_feed)
+        self.repo.insert_many(db, final_feed)
+        return final_feed

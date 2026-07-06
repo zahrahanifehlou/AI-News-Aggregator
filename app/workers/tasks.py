@@ -18,7 +18,8 @@ def run_pipeline_task(self):
         if not inserted_articles:
             print("No new articles today")
             return {"inserted": 0}
-
+        print("finish pipeline")
+        print(inserted_articles)
         html = NewsletterBuilder().build_html(inserted_articles)
 
         EmailSender().send(

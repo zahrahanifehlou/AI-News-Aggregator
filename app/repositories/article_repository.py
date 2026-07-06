@@ -37,6 +37,7 @@ class ArticleRepository:
 
         db.execute(query, payload)
         db.commit()
+        print("inserted articles:", len(payload))
         return len(payload)
 
     def get_top(self, db, limit: int = 20):
