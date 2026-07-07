@@ -4,7 +4,7 @@ from app.collectors.rss import RSSCollector
 from app.services.summarizer import Summarizer
 from app.services.deduplicator import Deduplicator
 from app.services.classifier import Classifier
-from app.agents.news_agent import NewsRankingAgent
+from app.services.ranker import NewsRankingAgent
 from app.config import RSS_FEEDS
 
 

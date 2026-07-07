@@ -1,1 +1,0 @@
-from app.config import DATABASE_URL

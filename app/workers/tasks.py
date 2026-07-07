@@ -2,7 +2,7 @@
 from app.workers.celery_app import celery
 from app.core.database import SessionLocal
 from app.repositories.article_repository import ArticleRepository
-from app.services.pipeline.orchestrator import NewsPipeline
+from app.services.orchestrator import NewsPipeline
 from app.services.newsletter import NewsletterBuilder
 from app.services.email_sender import EmailSender
 
