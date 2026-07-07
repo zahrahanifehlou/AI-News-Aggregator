@@ -22,6 +22,6 @@ celery.conf.update(
 celery.conf.beat_schedule = {
     'daily-news-pipeline': {
         'task': 'app.workers.tasks.run_pipeline_task',
-        'schedule': crontab(hour=9, minute=15),
+        'schedule': crontab(hour=18, minute=30),
     },
 }

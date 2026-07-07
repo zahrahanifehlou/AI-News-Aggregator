@@ -5,6 +5,8 @@ from app.repositories.article_repository import ArticleRepository
 from app.services.orchestrator import NewsPipeline
 from app.services.newsletter import NewsletterBuilder
 from app.services.email_sender import EmailSender
+from app.config import TO_EMAIL
+from datetime import datetime
 
 @celery.task(bind=True)
 def run_pipeline_task(self):
@@ -23,8 +25,8 @@ def run_pipeline_task(self):
         html = NewsletterBuilder().build_html(inserted_articles)
 
         EmailSender().send(
-            to_email="hanifelo@live.com",
-            subject="Daily AI News Digest",
+            to_email= TO_EMAIL,
+            subject=f"Daily AI News Digest date={datetime.now().date()}",
             html_content=html
         )
         return {"inserted": len(inserted_articles)}

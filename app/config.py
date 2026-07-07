@@ -58,7 +58,9 @@ EMAIL_USER = os.getenv(
 EMAIL_PASSWORD = os.getenv(
     "EMAIL_PASSWORD"
 )
-
+TO_EMAIL = os.getenv(
+    "TO_EMAIL"
+)
 
 # -----------------------------
 # Celery
