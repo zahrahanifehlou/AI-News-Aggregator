@@ -24,7 +24,7 @@ class NewsRankingAgent:
         try:
             scores = json.loads(response)
         except (json.JSONDecodeError, Exception) as e:
-            print(f"Ranking parse error for '{article.title}': {e}")
+            print(f"Ranking parse error for '{article.summary}' - {article.title}: {e}")
             scores = {
                 "technical_impact": 0,
                 "industry_importance": 0,

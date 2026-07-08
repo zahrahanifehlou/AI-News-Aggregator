@@ -1,6 +1,31 @@
 version: '3.9'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: news_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: news
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: news_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
   api:
     build:
       context: .
@@ -9,11 +34,12 @@ services:
     ports:
       - "8001:8000"
     env_file:
-      - .env
+      - .env.docker
     depends_on:
-      - postgres
-      - redis
-      - ollama
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     restart: unless-stopped
 
   worker:
@@ -22,44 +48,13 @@ services:
       dockerfile: Dockerfile.worker
     container_name: news_worker
     env_file:
-      - .env
+      - .env.docker
     depends_on:
-      - redis
-      - postgres
-      - ollama
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     restart: unless-stopped
-
-  redis:
-    image: redis:7-alpine
-    container_name: news_redis
-    ports:
-      - "6379:6379"
-    restart: unless-stopped
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: news_postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: news
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    ports:
-      - "11435:11434"
-    volumes:
-      - ollama:/root/.ollama
-    restart: unless-stopped
-    # Optional: pull model on start
-    command: serve
 
 volumes:
   postgres_data:
-  ollama:
