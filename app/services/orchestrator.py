@@ -23,7 +23,7 @@ class NewsPipeline:
         # 1. Collect + summarize
         for source, url in RSS_FEEDS.items():
             collector = RSSCollector(source, url)
-            articles = collector.collect()[:2]
+            articles = collector.collect()[:20]
 
             for a in articles:
                 all_articles.append(self.summarizer.summarize(a))

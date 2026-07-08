@@ -1,4 +1,4 @@
-# app/core/database.py
+# app/models/article.py
 ## Core: Database (ONLY engine/session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
